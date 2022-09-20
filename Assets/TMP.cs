@@ -1,21 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TMP : MonoBehaviour
 {
+    // Champs
+    [SerializeField] UnityEvent _onBlabla;
+
+    int _health;
+    int _maxHealth;
+
+    public event UnityAction OnBlabla;
+    public event UnityAction<int, int> OnHealthChanged;
+
+    // Propriété
+    public int Age { get; private set; }
+    public int Health
+    {
+        get => _health;
+    }
+
+    public void LaunchCoucou()
+    {
+        int age = 12;
+
+        if (OnBlabla != null)
+        {
+            OnBlabla.Invoke();
+        }
+
+        OnBlabla?.Invoke();
+        _onBlabla?.Invoke();
+
+        OnHealthChanged?.Invoke(_health, 12);
+    }
+
+#region ValeurRef
     void Start()
     {
+
         // int
         int maVariable = 42;
         Debug.Log($"[INT] PRE maVariable {maVariable}");
-        PassageTypeValeur(maVariable);
+        PassageTypeValeur(ref maVariable);
         Debug.Log($"[INT] POST maVariable {maVariable}");
 
         // string
         string maVariable2 = "Hello World !";
         Debug.Log($"[STRING] PRE maVariable2 {maVariable2}");
-        PassageTypeReference(maVariable2);
+        PassageTypeReference(ref maVariable2);
         Debug.Log($"[STRING] POST maVariable {maVariable2}");
 
         // Vector3
@@ -31,12 +65,12 @@ public class TMP : MonoBehaviour
         Debug.Log($"[SR] POST maVariable {spriteRenderer.color}");
     }
 
-    void PassageTypeValeur(int monParam)
+    void PassageTypeValeur(ref int monParam)
     {
         monParam = 3712;
     }
 
-    void PassageTypeReference(string monParam)
+    void PassageTypeReference(ref string monParam)
     {
         monParam = "Ah bah non";
     }
@@ -50,6 +84,8 @@ public class TMP : MonoBehaviour
     {
         monParam.color = Color.red;
     }
+
+#endregion
 
 
 }
