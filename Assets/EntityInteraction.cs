@@ -19,30 +19,74 @@ public class EntityInteraction : MonoBehaviour
     [SerializeField] Sprite _lockedCursor;
     [SerializeField] Color _lockedColor;
 
+    IUsable _focus;
+
+    private void Start()
+    {
+        _clickInput.action.started += UseComponent;
+    }
+
+    private void UseComponent(InputAction.CallbackContext obj)
+    {
+        if(_focus != null)
+        {
+            _focus.Use();
+        }
+    }
+
     private void Update()
     {
         Debug.DrawRay(transform.position, transform.forward*2, Color.yellow);
-        if(Physics.Raycast(transform.position, transform.forward, out var hit, 2f))
+        if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 2f))
         {
-            if(hit.collider.TryGetComponent<IUsable>(out IUsable usableComponent))
             {
-                usableComponent.Use();
-                _cursor.sprite = _lockedCursor;
-                _cursor.color = _lockedColor;
-                _focusName.text = usableComponent.GetName();
+            /*
+            if (hit.collider.TryGetComponent<Button>(out var button))
+            {
+                button.Push();
+            }
+
+            if (hit.collider.TryGetComponent<Lever>(out var lever))
+            {
+                button.Activate();
+            }
+
+            if (hit.collider.TryGetComponent<NPC>(out var npc))
+            {
+                button.Talk();
+            }
+            */
+            }
+
+            if (hit.collider.TryGetComponent<IUsable>(out IUsable usableComponent))
+            {
+                ShowInteraction(usableComponent);
+                _focus = usableComponent;
             }
             else
             {
-                _cursor.sprite = _emptyCursor;
-                _cursor.color = _emptyColor;
-                _focusName.text = "";
+                HideInteraction();
+                _focus = null;
             }
         }
         else
         {
-            _cursor.sprite = _emptyCursor;
-            _cursor.color = _emptyColor;
-            _focusName.text = "";
+            HideInteraction();
+            _focus = null;
         }
     }
+
+    void ShowInteraction(IUsable usableComponent)
+    {
+        _cursor.sprite = _lockedCursor;
+        _cursor.color = _lockedColor;
+        _focusName.text = usableComponent.GetName();
+    }
+    void HideInteraction()
+    {
+        _cursor.sprite = _emptyCursor;
+        _cursor.color = _emptyColor;
+        _focusName.text = "";
+    }
+
 }
