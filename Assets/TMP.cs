@@ -5,30 +5,37 @@ using UnityEngine.Events;
 
 public class TMP : MonoBehaviour
 {
-    // Champs
     [SerializeField] UnityEvent _onBlabla;
 
-    int _health;
-    int _maxHealth;
+    [SerializeField] int _maxHealth;
 
     public event UnityAction OnBlabla;
     public event UnityAction<int, int> OnHealthChanged;
 
-    // Propriété
     public int Age { get; private set; }
+
+
+    int _health;
     public int Health
     {
         get => _health;
+        private set
+        {
+            _health = Mathf.Clamp(value, 0, _maxHealth);
+        }
     }
 
     public void LaunchCoucou()
     {
         int age = 12;
 
+        Health = -12;
+
         if (OnBlabla != null)
         {
             OnBlabla.Invoke();
         }
+
 
         OnBlabla?.Invoke();
         _onBlabla?.Invoke();
